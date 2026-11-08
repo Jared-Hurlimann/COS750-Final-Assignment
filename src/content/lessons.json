@@ -1,0 +1,134 @@
+{
+  "screens": [
+    {
+      "id": "welcome",
+      "title": "Welcome",
+      "short": "Start"
+    },
+    {
+      "id": "tree",
+      "title": "What is a tree?",
+      "short": "Trees"
+    },
+    {
+      "id": "rule",
+      "title": "The BST rule",
+      "short": "Rule"
+    },
+    {
+      "id": "search",
+      "title": "How a search works",
+      "short": "Search"
+    },
+    {
+      "id": "worked",
+      "title": "Worked example",
+      "short": "Watch"
+    },
+    {
+      "id": "yourturn",
+      "title": "Your turn",
+      "short": "You try"
+    },
+    {
+      "id": "practice",
+      "title": "Practice",
+      "short": "Practice"
+    },
+    {
+      "id": "sandbox",
+      "title": "Sandbox",
+      "short": "Sandbox"
+    },
+    {
+      "id": "check",
+      "title": "Final check",
+      "short": "Check"
+    },
+    {
+      "id": "results",
+      "title": "Results",
+      "short": "Results"
+    }
+  ],
+  "welcome": {
+    "hook": "How does your phone find one contact among 1000 in a split second?",
+    "intro": "It does not read the whole list from top to bottom. Every question it asks throws away half of what is left. A [[bst|binary search tree]] stores [[key|keys]] so that a [[search]] works exactly like that. This app gets you ready for the COS212 lecture on BSTs, and it assumes you have never seen a [[tree]] before.",
+    "reassurance": "Nothing here is marked, and you can retry anything as often as you like. Your progress stays on this device.",
+    "minutes": "About 30 to 40 minutes. You can stop and come back any time."
+  },
+  "outcomes": {
+    "LO1": {
+      "short": "Tree vocabulary",
+      "text": "Name the parts of a tree ([[root]], [[parent]], [[child]], [[leaf]], [[subtree]]) on a diagram.",
+      "screen": 1
+    },
+    "LO2": {
+      "short": "The BST rule",
+      "text": "State the [[bst-rule|BST rule]] and decide whether a given tree obeys it.",
+      "screen": 2
+    },
+    "LO3": {
+      "short": "Tracing a search",
+      "text": "Trace a BST [[search]] and list the [[node|nodes]] visited, for a key that is present and for one that is absent.",
+      "screen": 5
+    },
+    "LO4": {
+      "short": "Counting comparisons",
+      "text": "Predict how many [[comparison|comparisons]] a search needs in a given tree.",
+      "screen": 4
+    },
+    "LO5": {
+      "short": "Tree shape",
+      "text": "Explain how the shape of a tree ([[balanced]] or [[lopsided]]) changes the number of comparisons, and why [[insert|inserting]] keys in sorted order gives a lopsided tree.",
+      "screen": 7
+    },
+    "LO6": {
+      "short": "Your readiness",
+      "text": "Judge your own readiness for the lecture from the check results and choose what to revise.",
+      "screen": 9
+    }
+  },
+  "terms": [
+    {
+      "id": "root",
+      "name": "Root",
+      "definition": "The single [[node]] at the very top. It is the only node with no [[parent]], and every search starts here."
+    },
+    {
+      "id": "parent",
+      "name": "Parent",
+      "definition": "The node directly above another node, joined to it by an [[edge]]. Here 30 is the parent of 20 and 40."
+    },
+    {
+      "id": "child",
+      "name": "Child",
+      "definition": "A node directly below another node. In a [[binary-tree|binary tree]] each node has at most two children: a left child and a right child."
+    },
+    {
+      "id": "leaf",
+      "name": "Leaf",
+      "definition": "A node with no children: the end of a branch. Here the leaves are 20, 40, 60 and 80."
+    },
+    {
+      "id": "subtree",
+      "name": "Subtree",
+      "definition": "A node together with everything below it, like a smaller tree inside the big one. The left subtree of 50 is 30 and all of its [[descendant|descendants]]."
+    }
+  ],
+  "rule": {
+    "statement": "For **every** node, all keys in its **left** [[subtree]] are **smaller** than the node's key, and all keys in its **right** subtree are **larger**.",
+    "whole": "The rule covers whole subtrees, not just the direct children. A key deep down on the left of 50 must still be smaller than 50."
+  },
+  "search": {
+    "analogy": "In higher-or-lower, a friend thinks of a number from 1 to 100. A smart first guess is 50: whatever the answer, half of the numbers are ruled out. A BST [[search]] does the same thing. Each [[node]] is a guess, and the answer tells you which half to keep.",
+    "rules": [
+      "Start at the [[root]].",
+      "If the key equals the current node's [[key]], you have found it.",
+      "If the key is smaller, go to the left [[child]].",
+      "If the key is larger, go to the right child.",
+      "If you need to go somewhere that is an [[empty-spot|empty spot]], the key is not in the tree."
+    ],
+    "counting": "We count one [[comparison]] for every node we visit. Reaching an empty spot costs nothing, because there is no key there to compare with."
+  }
+}
