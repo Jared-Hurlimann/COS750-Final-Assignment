@@ -3,6 +3,7 @@ import { ArrowDownLeft, ArrowDownRight, Check, SkipForward } from 'lucide-react'
 import { findAnywhere, moveFor, searchTrace, type Move, type Side, type Tree } from '../engine/bst';
 import { LINE, Pseudocode } from './Pseudocode';
 import { TreeView, type NodeState, type Traveller } from './TreeView';
+import { useAutoNarrate } from './Narrate';
 
 /**
  * - watch:  the app performs every step; the student paces it with "Next step".
@@ -74,6 +75,14 @@ function GuidedWalk({ tree, searchKey, mode, given = 0, showCode = true, onDone 
   const step = trace.steps[done];
 
   useEffect(() => { if (finished) finish(true); });
+
+  const endText = trace.found
+    ? `Found ${searchKey} after ${total} comparison${total === 1 ? '' : 's'}.`
+    : `${searchKey} is not in the tree. We made ${total} comparison${total === 1 ? '' : 's'} and reached an empty spot.`;
+  // Worked example ("watch me"): with narration on, each step is read aloud as it appears.
+  useAutoNarrate(mode !== 'watch' ? null
+    : log.length === 0 ? `Searching for ${searchKey}. Start at the root, ${trace.steps[0]?.at ?? ''}.`
+    : `Step ${log.length}. ${log[log.length - 1].text}${finished ? ` ${endText}` : ''}`);
 
   const advance = (kind: LogEntry['kind']) => {
     // Derive the step from the list length, so rapid clicks never log a stale step.
@@ -150,9 +159,7 @@ function GuidedWalk({ tree, searchKey, mode, given = 0, showCode = true, onDone 
         {feedback && <p className={`feedback ${feedback.kind}`} role="status">{feedback.text}</p>}
         {finished && (
           <p className="feedback ok" role="status">
-            ✓ {trace.found
-              ? `Found ${searchKey} after ${total} comparison${total === 1 ? '' : 's'}.`
-              : `${searchKey} is not in the tree. We made ${total} comparison${total === 1 ? '' : 's'} and reached an empty spot.`}
+            ✓ {endText}
           </p>
         )}
         {showCode && <Pseudocode active={codeLine} />}

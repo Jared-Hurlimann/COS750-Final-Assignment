@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import { ArrowRight, ClipboardList, FileText, Printer, RotateCcw, Sprout, TreeDeciduous, TreePine, Compass } from 'lucide-react';
+import { ArrowRight, ClipboardList, Download, FileText, Printer, RotateCcw, Sprout, TreeDeciduous, TreePine, Compass } from 'lucide-react';
 import lessons from '../content/lessons.json';
 import { CONTENT_LOS, type LO } from '../engine/questions';
 import { SEARCH_CODE } from '../components/Pseudocode';
 import { plain } from '../components/Glossary';
 import type { ScreenProps } from './types';
+import type { CheckAttempt } from '../progress';
 import { ScreenActions } from '../components/ScreenActions';
 
 type Route = { id: 'ready' | 'review' | 'guided'; title: string; text: string };
@@ -16,6 +17,57 @@ export function routeFor(pct: number): Route {
   return { id: 'guided', title: 'Take the guided route', text: 'Go back through the worked example and “Your turn”, which have hints, then retake the check. That is exactly what they are for.' };
 }
 const ROUTE_ICON = { ready: TreeDeciduous, review: TreePine, guided: Sprout } as const;
+
+const SHAPE_NOTE = 'The worst case equals the number of levels. A balanced tree with n keys has about log₂ n levels; inserting keys in sorted order makes a chain of n levels.';
+
+/** The summary sheet as plain text, for the "Download" button. */
+export function summaryText(a: CheckAttempt, plan: LO | null): string {
+  const pct = Math.round((a.correct / a.total) * 100);
+  const lines = [
+    'FOREST OF KEYS: BST SEARCH SUMMARY',
+    '',
+    'TREE WORDS',
+    ...lessons.terms.map((t) => `- ${t.name}: ${plain(t.definition)}`),
+    '',
+    'THE BST RULE',
+    plain(lessons.rule.statement),
+    plain(lessons.rule.whole),
+    '',
+    'HOW A SEARCH WORKS',
+    ...lessons.search.rules.map((r, i) => `${i + 1}. ${plain(r)}`),
+    '',
+    'COUNTING COMPARISONS',
+    plain(lessons.search.counting),
+    '',
+    'TREE SHAPE',
+    SHAPE_NOTE,
+    '',
+    'PSEUDOCODE',
+    ...SEARCH_CODE,
+    '',
+    `MY FINAL CHECK (${new Date(a.date).toLocaleDateString()})`,
+    `${a.correct}/${a.total} (${pct}%): ${routeFor(pct).title}`,
+    ...CONTENT_LOS.map((lo) => `- ${lo} ${lessons.outcomes[lo].short}: ${a.byLO[lo].correct}/${a.byLO[lo].total} (${mark(a.byLO[lo].correct, a.byLO[lo].total).text})`),
+    ...(plan ? ['', `Revising first: ${lessons.outcomes[plan].short}`] : []),
+    '',
+  ];
+  return lines.join('\r\n');
+}
+
+function download(text: string) {
+  try {
+    const url = URL.createObjectURL(new Blob(['\uFEFF' + text], { type: 'text/plain;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'forest-of-keys-summary.txt';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch {
+    window.print();
+  }
+}
 
 function mark(c: number, t: number) {
   if (c === t) return { icon: '✓', cls: 'ok', text: 'secure' };
@@ -151,7 +203,7 @@ export function Results({ go, progress, update }: ScreenProps) {
             <li><strong>BST rule:</strong> {plain(lessons.rule.statement)} {plain(lessons.rule.whole)}</li>
             <li><strong>Search:</strong> {lessons.search.rules.map(plain).join(' ')}</li>
             <li><strong>Counting:</strong> {plain(lessons.search.counting)}</li>
-            <li><strong>Shape:</strong> the worst case equals the number of levels. A balanced tree with n keys has about log₂ n levels; inserting keys in sorted order makes a chain of n levels.</li>
+            <li><strong>Shape:</strong> {SHAPE_NOTE}</li>
           </ul>
           <pre className="code">{SEARCH_CODE.join('\n')}</pre>
           <p>
@@ -166,6 +218,7 @@ export function Results({ go, progress, update }: ScreenProps) {
         secondary={[
           { label: `${showSummary ? 'Hide' : 'Show'} summary`, icon: <FileText size={18} aria-hidden="true" />, onClick: () => setShowSummary((s) => !s) },
           showSummary && { label: 'Print', icon: <Printer size={18} aria-hidden="true" />, onClick: () => window.print() },
+          { label: 'Download summary', icon: <Download size={18} aria-hidden="true" />, onClick: () => download(summaryText(a, plan)) },
         ]}
       />
     </section>

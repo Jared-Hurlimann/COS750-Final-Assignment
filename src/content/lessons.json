@@ -55,7 +55,13 @@
     "hook": "How does your phone find one contact among 1000 in a split second?",
     "intro": "It does not read the whole list from top to bottom. Every question it asks throws away half of what is left. A [[bst|binary search tree]] stores [[key|keys]] so that a [[search]] works exactly like that. This app gets you ready for the COS212 lecture on BSTs, and it assumes you have never seen a [[tree]] before.",
     "reassurance": "Nothing here is marked, and you can retry anything as often as you like. Your progress stays on this device.",
-    "minutes": "About 30 to 40 minutes. You can stop and come back any time."
+    "minutes": "About 30 to 40 minutes. You can stop and come back any time.",
+    "usesTitle": "Where are BSTs used?",
+    "uses": [
+      "[[database|Databases]] keep a tree-shaped index of their records, so finding one student among millions takes a few dozen comparisons instead of millions.",
+      "[[file-system|File systems]] use tree-shaped indexes to find one file quickly, even in a folder that holds thousands of files.",
+      "In Java, [[treemap|TreeMap]] and TreeSet store their keys in a binary search tree that keeps itself [[balanced]]. You will use them in COS212."
+    ]
   },
   "outcomes": {
     "LO1": {
@@ -65,7 +71,7 @@
     },
     "LO2": {
       "short": "The BST rule",
-      "text": "State the [[bst-rule|BST rule]] and decide whether a given tree obeys it.",
+      "text": "State the [[bst-rule|BST rule]] and decide whether a given tree obeys it, including the rule throughout each [[subtree]], not only between a parent and its children.",
       "screen": 2
     },
     "LO3": {
@@ -130,5 +136,27 @@
       "If you need to go somewhere that is an [[empty-spot|empty spot]], the key is not in the tree."
     ],
     "counting": "We count one [[comparison]] for every node we visit. Reaching an empty spot costs nothing, because there is no key there to compare with."
+  },
+  "sandbox": {
+    "task": {
+      "title": "Real-world task: a class list",
+      "intro": "A tutor wants to look up students quickly, so they store student numbers in a BST. To keep the numbers short, we use only the last three digits.",
+      "registration": [
+        512,
+        287,
+        845,
+        136,
+        390,
+        703,
+        961
+      ],
+      "lookFor": 703,
+      "absent": 400,
+      "steps": [
+        "Load the class list in the order students registered.",
+        "Use **Search your tree** to look up {lookFor}. How many [[comparison|comparisons]] does it take? Now look up {absent}, who is not in the class.",
+        "Load the same numbers sorted from smallest to largest, as if they came from a sorted spreadsheet. How many [[level|levels]] does the tree have now, and how many comparisons does {lookFor} take?"
+      ]
+    }
   }
 }

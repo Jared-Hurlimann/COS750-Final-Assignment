@@ -1,5 +1,6 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Download, Gauge, Monitor, Moon, RotateCcw, Smartphone, Sun, Type, X } from 'lucide-react';
+import { Download, Gauge, Monitor, Moon, RotateCcw, Smartphone, Sun, Type, Volume2, VolumeX, X } from 'lucide-react';
+import { speechSupported, stopSpeaking } from './Narrate';
 import { useSettings, type Motion, type TextSize, type Theme } from '../settings';
 
 interface BeforeInstallPromptEvent extends Event {
@@ -108,6 +109,29 @@ export function SettingsPanel({ onClose, onReset }: { onClose: () => void; onRes
           ]}
         />
         <p className="muted small">Reduced turns off moving animations, which helps if motion makes you feel dizzy or distracted.</p>
+
+        {speechSupported() ? (
+          <>
+            <Segmented<'off' | 'on'>
+              label="Narration"
+              value={settings.narration ? 'on' : 'off'}
+              onChange={(v) => { if (v === 'off') stopSpeaking(); set('narration', v === 'on'); }}
+              options={[
+                { value: 'off', label: 'Off', icon: <VolumeX size={16} aria-hidden="true" /> },
+                { value: 'on', label: 'On', icon: <Volume2 size={16} aria-hidden="true" /> },
+              ]}
+            />
+            <p className="muted small">
+              On adds <strong>Listen</strong> buttons to the lessons, and the worked example reads each step aloud. It uses
+              your device's own voice, so nothing is sent anywhere. Everything spoken is also on screen.
+            </p>
+          </>
+        ) : (
+          <div className="setting">
+            <span className="setting-label">Narration</span>
+            <p className="muted small">This browser cannot read text aloud. Every explanation is still on screen.</p>
+          </div>
+        )}
 
         <div className="setting">
           <span className="setting-label">Use it like an app</span>

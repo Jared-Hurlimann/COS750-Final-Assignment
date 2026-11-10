@@ -1,6 +1,7 @@
-import { ArrowRight, Clock, Eye, Footprints, Heart, Lightbulb, Play, ShieldCheck, Sparkles, Target } from 'lucide-react';
+import { ArrowRight, Clock, Eye, Footprints, Globe, Heart, Lightbulb, Play, ShieldCheck, Sparkles, Target } from 'lucide-react';
 import lessons from '../content/lessons.json';
 import { RichText } from '../components/Glossary';
+import { ListenButton } from '../components/Narrate';
 import type { ScreenProps } from './types';
 
 const LOS = Object.entries(lessons.outcomes);
@@ -56,6 +57,7 @@ export function Welcome({ go, progress }: ScreenProps) {
           <h1>Forest of Keys</h1>
           <p className="hook">{lessons.welcome.hook}</p>
           <p><RichText text={lessons.welcome.intro} /></p>
+          <ListenButton text={[lessons.welcome.hook, lessons.welcome.intro, lessons.welcome.reassurance]} label="Listen to the welcome" />
           <div className="reassure-row">
             <span><Heart size={15} aria-hidden="true" /> Nothing is marked</span>
             <span><ShieldCheck size={15} aria-hidden="true" /> Stays on your device</span>
@@ -79,6 +81,14 @@ export function Welcome({ go, progress }: ScreenProps) {
             <div><h3>{title}</h3><p>{text}</p></div>
           </div>
         ))}
+      </div>
+
+      <div className="card">
+        <h2><span className="icon-title"><Globe size={20} aria-hidden="true" /></span> {lessons.welcome.usesTitle}</h2>
+        <ul className="outcomes">
+          {lessons.welcome.uses.map((u) => <li key={u}><span><RichText text={u} /></span></li>)}
+        </ul>
+        <ListenButton text={[lessons.welcome.usesTitle, ...lessons.welcome.uses]} />
       </div>
 
       <div className="card">

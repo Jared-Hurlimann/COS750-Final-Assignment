@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ComponentType } from 'react';
+import { useCallback, useEffect, useRef, useState, type ComponentType } from 'react';
 import { ArrowLeft, ArrowRight, BookOpen, Check, Dumbbell, Flag, Footprints, Lightbulb, Settings, Sprout, type LucideIcon } from 'lucide-react';
 import lessons from './content/lessons.json';
 import { useProgress } from './progress';
@@ -6,6 +6,8 @@ import { useSettings } from './settings';
 import { GlossaryPanel } from './components/Glossary';
 import { Logo } from './components/Logo';
 import { SettingsPanel } from './components/SettingsPanel';
+import { LeaveDialog } from './components/LeaveDialog';
+import { stopSpeaking } from './components/Narrate';
 import type { ScreenProps } from './screens/types';
 import { Welcome } from './screens/Welcome';
 import { TreeTerms } from './screens/TreeTerms';
@@ -39,12 +41,32 @@ export default function App() {
   const screen = Math.min(Math.max(progress.screen, 0), SCREENS.length - 1);
   const mainRef = useRef<HTMLElement>(null);
   const first = useRef(true);
+  /** Set by a screen (the final check) that must not be left without confirming. */
+  const leaveGuard = useRef<string | null>(null);
+  const [pendingGo, setPendingGo] = useState<number | null>(null);
+  const setLeaveGuard = useCallback((message: string | null) => { leaveGuard.current = message; }, []);
 
-  const go = (n: number) => {
+  const navigate = (n: number) => {
     update((p) => ({ ...p, screen: n, visited: p.visited.includes(n) ? p.visited : [...p.visited, n] }));
   };
+  const go = (n: number) => {
+    if (leaveGuard.current && n !== screen) setPendingGo(n);
+    else navigate(n);
+  };
+
+  // Closing or reloading the tab mid-check: let the browser ask too.
+  useEffect(() => {
+    const onUnload = (e: BeforeUnloadEvent) => {
+      if (!leaveGuard.current) return;
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', onUnload);
+    return () => window.removeEventListener('beforeunload', onUnload);
+  }, []);
 
   useEffect(() => {
+    stopSpeaking();
     document.title = `${lessons.screens[screen].title} · Forest of Keys`;
     if (first.current) { first.current = false; return; }
     window.scrollTo({ top: 0 });
@@ -123,7 +145,7 @@ export default function App() {
             {phase.screens.length > 1 && <span className="muted"> · part {stepInPhase} of {phase.screens.length}</span>}
           </p>
         )}
-        <Screen key={screen} go={go} progress={progress} update={update} />
+        <Screen key={screen} go={go} progress={progress} update={update} setLeaveGuard={setLeaveGuard} />
       </main>
 
       {screen > 0 && (
@@ -147,6 +169,14 @@ export default function App() {
 
       <GlossaryPanel />
       {settingsOpen && <SettingsPanel onClose={() => setSettingsOpen(false)} onReset={reset} />}
+      {pendingGo !== null && (
+        <LeaveDialog
+          message={leaveGuard.current ?? ''}
+          destination={lessons.screens[pendingGo].title}
+          onStay={() => setPendingGo(null)}
+          onLeave={() => { const n = pendingGo; leaveGuard.current = null; setPendingGo(null); navigate(n); }}
+        />
+      )}
     </div>
   );
 }

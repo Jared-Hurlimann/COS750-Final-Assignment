@@ -1,5 +1,5 @@
 /**
- * Display settings (per device): theme, text size and motion.
+ * Display settings (per device): theme, text size, motion and narration.
  * Applied as data-attributes on <html> so plain CSS can react to them.
  * index.html applies the saved theme before first paint to avoid a flash.
  */
@@ -13,6 +13,8 @@ export interface Settings {
   theme: Theme;
   text: TextSize;
   motion: Motion;
+  /** Show "Listen" buttons and read worked-example steps aloud. Off by default. */
+  narration: boolean;
 }
 
 export const SETTINGS_KEY = 'forest-of-keys:settings';
@@ -26,7 +28,7 @@ function systemPrefersReducedMotion(): boolean {
 }
 
 function load(): Settings {
-  const fallback: Settings = { theme: 'auto', text: 'normal', motion: systemPrefersReducedMotion() ? 'reduced' : 'full' };
+  const fallback: Settings = { theme: 'auto', text: 'normal', motion: systemPrefersReducedMotion() ? 'reduced' : 'full', narration: false };
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     return raw ? { ...fallback, ...(JSON.parse(raw) as Partial<Settings>) } : fallback;
@@ -49,7 +51,7 @@ const SettingsContext = createContext<Ctx | null>(null);
 
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<Settings>(() =>
-    typeof window === 'undefined' ? { theme: 'auto', text: 'normal', motion: 'full' } : load(),
+    typeof window === 'undefined' ? { theme: 'auto', text: 'normal', motion: 'full', narration: false } : load(),
   );
   const [glossaryOpen, setGlossaryOpen] = useState<string | false>(false);
 
@@ -77,7 +79,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 }
 
 const DEFAULT_CTX: Ctx = {
-  settings: { theme: 'auto', text: 'normal', motion: 'full' },
+  settings: { theme: 'auto', text: 'normal', motion: 'full', narration: false },
   set: () => {},
   animate: false,
   glossaryOpen: false,

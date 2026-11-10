@@ -5,6 +5,7 @@ import { RichText, Term } from '../components/Glossary';
 import { Parts } from '../components/Parts';
 import { Pseudocode } from '../components/Pseudocode';
 import { ScreenActions } from '../components/ScreenActions';
+import { ListenButton } from '../components/Narrate';
 import type { ScreenProps } from './types';
 
 const PARTS = ['Warm-up game', 'The search rules'];
@@ -56,6 +57,7 @@ export function HowSearch({ go }: ScreenProps) {
               <div>
                 <h2>Higher or lower?</h2>
                 <p><RichText text={lessons.search.analogy} /></p>
+                <ListenButton text={lessons.search.analogy} />
                 <form onSubmit={submit} className="guess-form">
                   <label htmlFor="guess">I am thinking of a number from 1 to 100. Your guess:</label>
                   <div className="btn-row">
@@ -109,6 +111,7 @@ export function HowSearch({ go }: ScreenProps) {
                   {lessons.search.rules.map((r) => <li key={r}><RichText text={r} /></li>)}
                 </ol>
                 <p className="callout"><strong>Counting:</strong> <RichText text={lessons.search.counting} /></p>
+                <ListenButton text={[...lessons.search.rules, 'Counting.', lessons.search.counting]} label="Listen to the rules" />
               </div>
               <div>
                 <h3>As <Term id="iterative">iterative</Term> <Term id="pseudocode">pseudocode</Term></h3>

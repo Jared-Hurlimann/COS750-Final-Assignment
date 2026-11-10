@@ -1,13 +1,46 @@
 import { useState, type FormEvent } from 'react';
-import { FlaskConical, Plus, RotateCcw, Search, Shapes, Shuffle, SkipForward } from 'lucide-react';
+import { FlaskConical, GraduationCap, Plus, RotateCcw, Search, Shapes, Shuffle, SkipForward } from 'lucide-react';
+import lessons from '../content/lessons.json';
 import { averageComparisons, buildTree, height, inorder, searchTrace, size, type Tree } from '../engine/bst';
 import { balancedOrder } from '../engine/questions';
-import { Term } from '../components/Glossary';
+import { RichText, Term } from '../components/Glossary';
 import { TreeView, type NodeState } from '../components/TreeView';
 import { useInsertAnimation } from '../components/useInsertAnimation';
 import { useSettings } from '../settings';
 import type { ScreenProps } from './types';
 import { ScreenActions } from '../components/ScreenActions';
+
+const TASK = lessons.sandbox.task;
+const fill = (s: string) => s.replace(/\{lookFor\}/g, String(TASK.lookFor)).replace(/\{absent\}/g, String(TASK.absent));
+
+/** Real-world task (Kolb: active experimentation): a class list of student numbers. */
+function ClassListTask({ onLoad }: { onLoad: (keys: number[]) => void }) {
+  const registered = buildTree(TASK.registration);
+  const sortedKeys = [...TASK.registration].sort((a, b) => a - b);
+  const sortedTree = buildTree(sortedKeys);
+  const n = (t: Tree, k: number) => searchTrace(t, k).comparisons;
+  return (
+    <div className="card task-card">
+      <h2><span className="icon-title"><GraduationCap size={20} aria-hidden="true" /></span> {TASK.title}</h2>
+      <p><RichText text={TASK.intro} /></p>
+      <ol>{TASK.steps.map((st) => <li key={st}><RichText text={fill(st)} /></li>)}</ol>
+      <div className="btn-row">
+        <button onClick={() => onLoad(TASK.registration)}>Load the class list ({TASK.registration.join(', ')})</button>
+        <button onClick={() => onLoad(sortedKeys)}>Load it sorted</button>
+      </div>
+      <details className="reflect">
+        <summary>Check your answers</summary>
+        <p>
+          In registration order the tree has {height(registered)} levels. Finding {TASK.lookFor} takes{' '}
+          {n(registered, TASK.lookFor)} comparisons, and finding out that {TASK.absent} is absent takes{' '}
+          {n(registered, TASK.absent)}. Sorted, the same numbers make a chain of {height(sortedTree)} levels:{' '}
+          {TASK.lookFor} now takes {n(sortedTree, TASK.lookFor)} comparisons. Same students, slower search, only
+          because of the order they were added.
+        </p>
+      </details>
+    </div>
+  );
+}
 
 const PRESETS: { label: string; keys: number[] }[] = [
   { label: 'Sorted: 1, 2, 3, 4, 5', keys: [1, 2, 3, 4, 5] },
@@ -94,6 +127,8 @@ export function Sandbox({ go }: ScreenProps) {
         travel down and compare its way to an <Term id="empty-spot">empty spot</Term>. Curious? Try{' '}
         <Term id="insert">inserting</Term> 1, 2, 3, 4, 5 in that order. What happens?
       </p>
+
+      <ClassListTask onLoad={(ks) => { setTool('search'); load(ks); }} />
 
       <div className="two-col sandbox">
         <div className="card">

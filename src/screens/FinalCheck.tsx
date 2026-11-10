@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Flag } from 'lucide-react';
 import { QuestionCard } from '../components/QuestionCard';
 import { buildFinalCheck, CONTENT_LOS, type LO } from '../engine/questions';
@@ -6,11 +6,22 @@ import type { CheckAttempt, OutcomeScore } from '../progress';
 import type { ScreenProps } from './types';
 import { ScreenActions } from '../components/ScreenActions';
 
-export function FinalCheck({ go, update }: ScreenProps) {
+export function FinalCheck({ go, update, setLeaveGuard }: ScreenProps) {
   const [started, setStarted] = useState(false);
   const [questions, setQuestions] = useState(() => buildFinalCheck(Date.now()));
   const [idx, setIdx] = useState(0);
   const [answers, setAnswers] = useState<(boolean | undefined)[]>([]);
+
+  // Once the check has begun, leaving through the menu or pager asks first.
+  const answeredCount = answers.filter((x) => x !== undefined).length;
+  useEffect(() => {
+    if (!started) return;
+    setLeaveGuard?.(
+      `You have answered ${answeredCount} of ${questions.length} questions. If you leave now, these answers are not kept, ` +
+      'and next time you start the check you will get a fresh set of questions.',
+    );
+  }, [started, answeredCount, questions.length, setLeaveGuard]);
+  useEffect(() => () => setLeaveGuard?.(null), [setLeaveGuard]);
 
   if (!started) {
     return (
@@ -44,6 +55,7 @@ export function FinalCheck({ go, update }: ScreenProps) {
       answers: questions.map((question, i) => ({ question, correct: !!answers[i] })),
     };
     update((p) => ({ ...p, attempts: [...p.attempts, attempt].slice(-5), revisePlan: null }));
+    setLeaveGuard?.(null);
     go(9);
   };
 

@@ -6,6 +6,7 @@ import { RichText, Term } from '../components/Glossary';
 import { ItemDots, Parts } from '../components/Parts';
 import { ScreenActions } from '../components/ScreenActions';
 import { TreeView, type NodeState } from '../components/TreeView';
+import { ListenButton } from '../components/Narrate';
 import type { ScreenProps } from './types';
 
 const tree = buildTree([50, 30, 70, 20, 40, 60, 80]);
@@ -80,6 +81,7 @@ export function TreeTerms({ go }: ScreenProps) {
             <Term id="edge">edges</Term> (the lines). In a <Term id="binary-tree">binary tree</Term> each node has at most
             two <Term id="child">children</Term>. The number inside each node is its <Term id="key">key</Term>.
           </p>
+          <ListenButton text="A tree stores items in nodes, the circles, joined by edges, the lines. In a binary tree each node has at most two children. The number inside each node is its key." label="Listen to the intro" />
           <div className="card">
             <div className="split">
               <div>
@@ -93,6 +95,7 @@ export function TreeTerms({ go }: ScreenProps) {
                   ))}
                 </div>
                 <p className="definition"><strong>{def.name}:</strong> <RichText text={def.definition} /></p>
+                <ListenButton key={def.id} text={`${def.name}. ${def.definition}`} label={`Listen: ${def.name.toLowerCase()}`} />
                 <p className="muted small" aria-live="polite">{inspect !== null ? describe(inspect) : 'Tip: you can also tap any node to see its role.'}</p>
               </div>
               <TreeView tree={tree} title={`Tree showing: ${def.name}`} nodeState={state} badges={view.badges} onNodeClick={setInspect} />
@@ -115,6 +118,7 @@ export function TreeTerms({ go }: ScreenProps) {
                   <>
                     <ItemDots count={TASKS.length} current={taskIdx} label="Question" />
                     <p className="prompt big-prompt">{task.prompt}</p>
+                    <ListenButton key={taskIdx} text={task.prompt} label="Read the question" />
                   </>
                 ) : <p className="feedback ok">✓ All three done. You know your tree words.</p>}
                 {taskMsg && !tasksDone && <p className={`feedback ${taskMsg.ok ? 'ok' : 'bad'}`} role="status">{taskMsg.text}</p>}

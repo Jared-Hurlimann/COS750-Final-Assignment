@@ -7,6 +7,7 @@ import { ItemDots, Parts } from '../components/Parts';
 import { ScreenActions } from '../components/ScreenActions';
 import { TreeView } from '../components/TreeView';
 import { useInsertAnimation } from '../components/useInsertAnimation';
+import { ListenButton } from '../components/Narrate';
 import type { ScreenProps } from './types';
 
 const PREDICT_KEYS = [35, 72, 55, 18];
@@ -59,6 +60,7 @@ export function BstRule({ go }: ScreenProps) {
             <p className="muted small" style={{ marginBottom: 6 }}>A <Term id="bst">binary search tree</Term> keeps its keys in order with one rule:</p>
             <p className="rule-text"><RichText text={lessons.rule.statement} /></p>
             <p style={{ marginBottom: 0 }}><RichText text={lessons.rule.whole} /></p>
+            <ListenButton text={[lessons.rule.statement, lessons.rule.whole]} label="Listen to the rule" />
           </div>
           <div className="card">
             <div className="split">
