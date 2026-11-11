@@ -123,7 +123,7 @@ VS Code will suggest the Vitest and EditorConfig extensions when you open the fo
 ## Project layout
 
 ```
-docs/            Design documents (instructional design draft, suggestions, tech stack)
+docs/            Design documents (Final ID Document, earlier draft, suggestions, tech stack)
 public/          Static files: favicon, PWA manifest, service worker (sw.js), app icons
 src/
   engine/        Pure TypeScript, no React: fully unit-tested
@@ -136,7 +136,9 @@ src/
     useInsertAnimation.ts  animated insertion used on the learning screens
     QuestionCard.tsx       multiple-choice and trace questions
     Glossary.tsx           tappable terms, glossary panel, [[term]] text markup
-    SettingsPanel.tsx      theme, text size, animations, install app
+    SettingsPanel.tsx      theme, text size, animations, narration, install app
+    Narrate.tsx            optional narration (Listen buttons, worked-example steps) with the device's voice
+    LeaveDialog.tsx        "Leave the final check?" confirmation
     Pseudocode.tsx, Logo.tsx
   screens/       The 10 screens of the user journey (0 Welcome … 9 Results)
   content/       Editable text: lessons.json, glossary.json, questionBank.json
@@ -150,18 +152,19 @@ src/
 
 | # | Screen | Outcomes |
 | --- | --- | --- |
-| 0 | Welcome | Hook, outcomes, reassurance |
+| 0 | Welcome | Hook, where BSTs are used, outcomes, reassurance |
 | 1 | What is a tree? | LO1 |
 | 2 | The BST rule | LO2 |
 | 3 | How a search works | prepares LO3 |
 | 4 | Worked example | LO3, LO4 |
 | 5 | Your turn (fading support) | LO3, LO4 |
 | 6 | Practice (adaptive) | LO2–LO5 |
-| 7 | Sandbox | LO5 |
-| 8 | Final check (10 questions, 2 per LO) | LO1–LO5 |
-| 9 | Results and revision route | LO6 |
+| 7 | Sandbox (incl. the class-list task) | LO5 |
+| 8 | Final check (10 questions, 2 per LO; asks before you leave mid-check) | LO1–LO5 |
+| 9 | Results, revision route and downloadable summary | LO6 |
 
-Results routes: **80%+** lecture-ready · **50–79%** review weak outcomes · **below 50%** guided walkthrough.
+Results routes: **80%+** lecture-ready · **50–79%** review weak outcomes · **below 50%** back to the worked example and
+"Your turn". Every route then retakes the full check.
 
 Comparison counting convention used everywhere: **one comparison per node visited**; reaching an empty spot costs nothing.
 
@@ -171,13 +174,17 @@ Comparison counting convention used everywhere: **one comparison per node visite
 - Light, dark or automatic theme; three text sizes; animations can be turned off (also follows the device's reduced-motion setting).
 - Every technical word is tappable for a plain-language definition (`src/content/glossary.json`), and there is a full Glossary panel.
 - Atkinson Hyperlegible font, keyboard operable, buttons instead of drag-and-drop, 44px+ touch targets.
+- Optional narration (⚙ Settings → Narration): Listen buttons on lesson text, and the worked example reads each step
+  aloud. It uses the device's own voice, so nothing is sent anywhere; everything spoken is also on screen.
 
 Handy URLs for presenting: `?screen=4` opens a screen directly, `?theme=light` or `?theme=dark` sets the theme.
 
 ## Editing content
 
 - Lesson wording, term definitions and outcome text: `src/content/lessons.json`. Write `[[node]]` or `[[node|nodes]]` to link a glossary term, `**text**` for bold.
-- Glossary: `src/content/glossary.json`.
+- Real-world uses on the Welcome screen: `welcome.uses` in `lessons.json`. Sandbox class-list task: `sandbox.task`
+  (the answers are worked out from the numbers, so you can change them freely).
+- Glossary: `src/content/glossary.json`. Every `[[term]]` must exist here; a test checks this.
 - Fixed conceptual questions: `src/content/questionBank.json` (`answer` is the index of the correct option).
 - Generated questions: `src/engine/questions.ts`. Run `npm test` after any change.
 
