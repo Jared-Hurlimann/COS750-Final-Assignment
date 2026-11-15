@@ -1,0 +1,73 @@
+[
+  {
+    "id": "bank-lo1-1",
+    "lo": "LO1",
+    "prompt": "A node with no children is called a…",
+    "options": ["Root", "Leaf", "Parent", "Subtree"],
+    "answer": 1,
+    "explanation": "A leaf has no children. The root is the one node with no parent."
+  },
+  {
+    "id": "bank-lo1-2",
+    "lo": "LO1",
+    "prompt": "What is a subtree?",
+    "options": [
+      "Any single edge in the tree",
+      "A node together with all of its descendants",
+      "The list of leaves",
+      "The path from the root to a leaf"
+    ],
+    "answer": 1,
+    "explanation": "A subtree is a node plus everything below it. Each child of a node is the root of a subtree."
+  },
+  {
+    "id": "bank-lo2-1",
+    "lo": "LO2",
+    "prompt": "In a BST, which keys are allowed in the LEFT subtree of a node with key 40?",
+    "options": [
+      "Only keys smaller than 40",
+      "Only keys larger than 40",
+      "Any key smaller than its own parent",
+      "Any key at all"
+    ],
+    "answer": 0,
+    "explanation": "The rule applies to the whole subtree: every key on the left of 40, at any depth, must be smaller than 40."
+  },
+  {
+    "id": "bank-lo2-2",
+    "lo": "LO2",
+    "prompt": "A tree where every left child is smaller than its parent and every right child is larger is always a BST. True or false?",
+    "options": ["True", "False"],
+    "answer": 1,
+    "explanation": "False. Checking only parent and child is not enough. A grandchild can be on the correct side of its parent but the wrong side of an ancestor higher up."
+  },
+  {
+    "id": "bank-lo5-1",
+    "lo": "LO5",
+    "prompt": "Why does inserting keys in sorted order (1, 2, 3, 4, 5…) give a lopsided tree?",
+    "options": [
+      "Each new key is larger than every key so far, so it always goes right of the last node",
+      "The BST rule stops working for sorted keys",
+      "Sorted keys are always placed in the left subtree",
+      "Insertion rebalances the tree after every key"
+    ],
+    "answer": 0,
+    "explanation": "Each new key is bigger than all earlier keys, so it is placed as the right child of the previous key. The tree becomes a chain, like a linked list."
+  },
+  {
+    "id": "bank-lo5-2",
+    "lo": "LO5",
+    "prompt": "A balanced BST with 1000 keys has about 10 levels. Roughly how many comparisons does a successful search need at most?",
+    "options": ["About 10", "About 100", "About 500", "About 1000"],
+    "answer": 0,
+    "explanation": "The worst case equals the number of levels. Each comparison discards a whole subtree, roughly halving what is left."
+  },
+  {
+    "id": "bank-lo5-3",
+    "lo": "LO5",
+    "prompt": "The same 1000 keys inserted in sorted order give a chain. How many comparisons does the worst-case search need?",
+    "options": ["About 10", "About 100", "About 500", "1000"],
+    "answer": 3,
+    "explanation": "A chain of 1000 nodes has 1000 levels. Searching for the last key visits every node, just like a linear search through a list."
+  }
+]
